@@ -3,3 +3,6 @@
 
 ## babel 篇
 [用 babel-plugin 实现按需加载](./babel/用babel-plugin实现按需加载.md)
+
+## tool 篇
+[高优雅的本地代码仓库管理方案](./tools/高优雅的本地代码仓库管理方案.md)
