@@ -1,4 +1,4 @@
-# Yarn with PnP 升级指北
+# Yarn2 with PnP 升级指北
 [Yarn](https://link.zhihu.com/?target=http%3A//yarnpkg.com/)  作为 JavaScript生态的一个强大的依赖管理工具，在去年年初就正式发布了V2版本，但就当时的表现情况来看稳定性属实不高。时间一晃已经到了2021年，随着去年`webpack5`，` vite`，`snowpack`等构建工具的升级与创新，前端的效能模块也有了比较大的进步空间，因此笔者准备对构建工具与Yarn with PnP协同进行前端工程化的整体链路提效，于是就记录下此文。
 
 ## 现状与痛点
@@ -23,7 +23,7 @@ Yarn 团队开发 PnP 特性最直接的原因就是现有的依赖管理方式�
 ### 可读性更好的输出日志
 
 虽然相对于其他替代方案（例如npm）Yarn的输出日志的可读性算是比较高的了，可是它还是存在各种各样的问题，例如当输出信息特别多的时候，开发者很难在一大堆输出中找到有用的内容，而且输出日志的颜色并没有起到帮助用户快速识别出重要信息的作用，甚至还会对日志的阅读造成一定的干扰。基于这些原因，v2版本对输出日志进行了一些改进，我们先来看一下它大概变成了什么样子了：
-
+![](../images/tools/YarnWithPnP/journal.png)
 ### PnP
 
 PnP 的具体工作原理是，作为把依赖从缓存拷贝到 `node_modules` 的替代方案，Yarn 会维护一张静态映射表，该表中包含了以下信息：
@@ -69,6 +69,7 @@ PnP 的具体工作原理是，作为把依赖从缓存拷贝到 `node_modules` 
 - 更快，更简单，更稳定的CI部署
   - 每次部署代码时，依赖的install占用的时间一直是一个大头，去掉这个步骤，整个流水线速度会大大提升
   - 不会存在本地环境运行正常，而线上环境运行挂掉的问题
+
 ## 准备工作
 
 首先升级到yarn2+版本，此版本自带PnP。
@@ -113,7 +114,19 @@ yarn
 
 以及外面一个.pnp.js我们的依赖在.yarn文件夹的cache目录中
 
-【图】
+```
+.yarn
+├── cache // 项目依赖文件，均变为一个个zip
+├── releases
+├── sdks // IDE对PnP的支持，一般是针对ts,eslint prettier等
+│   └── eslint
+│   └── typescript
+│   └── integrations.yml
+├── unplugged // 需要调试的项目依赖，和node_modules里一样，有完整内容
+├── build-state.yml
+├── install-state.gz
+
+```
 
 ## Tips
 
@@ -150,6 +163,8 @@ yarnPath: .yarn/releases/yarn-berry.cjs
 yarn2的输出日志可读性还是比较高的，可以从[状态码说明](https://yarnpkg.com/advanced/error-codes#yn0009---build_failed)找到解决问题的思路。
 
 笔者遇到的错误代码是*YN0009 - `BUILD_FAILED`* ，日志输出的内容为项目workspace构建失败，经过查找发现是项目 `package.json` 中的script含有含有`/.*npm.*/`相关内容所致。
+错误日志如图：
+![](../images/tools/YarnWithPnP/errorInfo.png)
 
 ### node_modules相关
 
@@ -206,3 +221,52 @@ Webpack5 本身已经支持PnP，但是如果使用的Webpack4就需要安装[`p
 5. 对于TypeScript，不要忘记在VSCode中选择 [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript)。
 
 更多关于IDE的支持说明 [yarn官网](https://yarnpkg.com/getting-started/editor-sdks) 有详细对IDE支持的说明
+
+### Cannot find module [...]
+
+由于某些`package`的依赖关系可能未正确指定。例如，运行过程中发现缺少一个依赖关系，导致Yarn拒绝对其进行访问。笔者目前在webpack-dev-server运行后日志也出现了此问题，来源自我司内部维护的一个依赖。
+
+针对这种情况，配置文件中的`packageExtensions`字段提供了一种扩展包定义的方法。当然也可以向官方提PR完善其`plugin-compat`数据库
+
+```
+// 扩展名仅应用与其版本与范围匹配的软件包，所以无论软件包来自何处都没有区别，仅仅是版本重要
+packageExtensions:
+	webpack@*:
+		dependencies:
+			lodash: "^4.15.0"
+		peerDependencies:
+			webpack-cli: "*"
+```
+
+但由于笔者从日志处发现缺失的依赖还是有一定数量级的错误，因此我停滞在此
+
+### 项目启动失败
+
+由于存在上文所述有依赖没有实现`PnP`规范，所以会导致工程还是跑不起来，那我们是不是只能倒退回yarn 1.x了？当然不会，Yarn2提供了两种安装方式：
+
+- PnP （默认）
+- node-modules
+
+```
+# .yarnrc.yml
+yarnPath: ".yarn/releases/yarn-berry.js"
+
+# 如果工程跑不起来可以先尝试启动宽松模式：
+nodeLinker: "pnp"
+pnpMode: "loose" // 默认为"strict"，所有用到的依赖都必须显式地声明在package.json中
+
+# 如果仍然跑不起来，可以用下面的配置完全按照以前的依赖按照方式
+nodeLinker: "node-modules"
+```
+
+## 总结
+
+升级Yarn2的过程比我想象的要坎坷，踩了不少坑，翻阅了无数的issue，目前我停滞在因为依赖缺少而导致webpack启动失败的环节，我坚信它是成功迁移Yarn2的最后一步，但我相信在后续的不断学习中，此问题终将迎刃而解。问题解决后我会更新本文。
+
+#### 参考链接
+
+- [Yarn’s Future - v2 and beyond](https://github.com/yarnpkg/yarn/issues/6953)
+- [Yarn Plug’n’Play: Getting rid of node_modules](https://github.com/yarnpkg/rfcs/pull/101)
+- [Plug’n’Play Whitepaper](https://github.com/yarnpkg/rfcs/files/2378943/Plugnplay.pdf)
+- [Yarn Plug’n’Play: Implementation](https://github.com/yarnpkg/yarn/pull/6382)
+- https://yarnpkg.com/en/docs/pnp
