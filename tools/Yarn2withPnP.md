@@ -56,7 +56,7 @@ PnP 的具体工作原理是，作为把依赖从缓存拷贝到 `node_modules` 
 
 ## 零安装（Zero-Installs）
 
-[依赖零安装](https://link.zhihu.com/?target=https%3A//next.yarnpkg.com/features/zero-installs)更像是一个理念而不是一个功能，在我们按照玩依赖后，依赖文件都缓存在项目文件夹中（.yarn/cache），只需确保将其上传到git即可完成零安装，同时保证依赖版本一致性。
+[依赖零安装](https://link.zhihu.com/?target=https%3A//next.yarnpkg.com/features/zero-installs)更像是一个理念而不是一个功能，在我们安装完依赖后，依赖文件都缓存在项目文件夹中（.yarn/cache），只需确保将其上传到git即可完成零安装，同时保证依赖版本一致性。
 
 在我们运行`yarn install`后，Yarn将生成一个`.pnp.js`文件。也将其添加到您的存储库，它包含Node将用于加载程序包的依赖关系树。
 
@@ -119,7 +119,7 @@ yarn
 
 ### 私有库设置
 
-如果你使用的库需要从私有源拉取，请先查看并更改yarn配置.更改 yarn 源，可以选择用命令行更改
+如果你使用的库需要从私有源拉取，请先查看并更改yarn配置。更改 yarn 源，由于和Yarn 1.x的配置差异挺大，全部的配置可查阅[官方配置文档](https://yarnpkg.com/configuration/yarnrc)，本文对私有源配置做一个示例：
 
 ```
 yarn config set npmRegistryServer http://registry.npm.dtstack.com  
@@ -151,7 +151,7 @@ yarn2的输出日志可读性还是比较高的，可以从[状态码说明](htt
 
 笔者遇到的错误代码是*YN0009 - `BUILD_FAILED`* ，日志输出的内容为项目workspace构建失败，经过查找发现是项目 `package.json` 中的script含有含有`/.*npm.*/`相关内容所致。
 
-## node_modules相关
+### node_modules相关
 
 现在项目不再有node_modules文件夹，也没有对应的.bin文件，之前依赖这些的文件只需要修改为 `yarn run` 即可正常运行。
 
@@ -169,3 +169,40 @@ yarn run webpack-dev-server --max_old_space_size=4092  --inline --config build/d
 
 如果项目用有直接调用 `node` 的内容也需要更改为使用 `yarn node` 启动
 
+### 调试依赖
+
+同上文，在PnP模式下由于依赖都指向了全局缓存，我们不再可以直接修改这些依赖。针对这种场景，Yarn 提供了 `yarn unplug [packageName]` 来将某个指定依赖拷贝到项目中的 `.yarn/unplugged` 目录下。其实是在 `package.json` 中写入了以下配置：
+
+```
+"dependenciesMeta": {
+    "node-sass": {
+      "built": false
+    },
+    "webpack@4.46.0": {
+      "unplugged": true
+    },
+    "webpack-dev-server@3.11.2": {
+      "unplugged": true
+    }
+  },
+```
+
+之后 `.pnp.js` 中的 resolver 就会自动加载这个 unplug 的版本。
+
+调试完毕后，再执行 `yarn unplug --clear packageName` 可移除本地 `.pnp/unplugged` 中的对应依赖。
+
+### Webpack4 相关
+
+Webpack5 本身已经支持PnP，但是如果使用的Webpack4就需要安装[`pnp-webpack-plugin` ](https://github.com/arcanis/pnp-webpack-plugin)插件
+
+### IDE支持
+
+如果使用的是VsCode，要点是
+
+1. 安装[ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode扩展
+2. 确保`typescript`，`eslint`，`prettier`等使用的IDE扩展所有相关性在`top level`项目（而不是随机的工作空间）
+3. Run `yarn dlx @yarnpkg/pnpify --sdk vscode`
+4. 对这些变更就行git commit，其他人就不必遵循相同的过程
+5. 对于TypeScript，不要忘记在VSCode中选择 [Use Workspace Version](https://code.visualstudio.com/docs/typescript/typescript-compiling#_using-the-workspace-version-of-typescript)。
+
+更多关于IDE的支持说明 [yarn官网](https://yarnpkg.com/getting-started/editor-sdks) 有详细对IDE支持的说明
