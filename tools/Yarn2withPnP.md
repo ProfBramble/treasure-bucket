@@ -69,7 +69,6 @@ PnP 的具体工作原理是，作为把依赖从缓存拷贝到 `node_modules` 
 - 更快，更简单，更稳定的CI部署
   - 每次部署代码时，依赖的install占用的时间一直是一个大头，去掉这个步骤，整个流水线速度会大大提升
   - 不会存在本地环境运行正常，而线上环境运行挂掉的问题
-
 ## 准备工作
 
 首先升级到yarn2+版本，此版本自带PnP。
@@ -89,7 +88,11 @@ yarn -v // 2.4.0
 由于yarn2和yarn1基本不兼容，所以为了避免yarn1的冲突，先清理掉项目的`node_modules`，`yarn.lock`，然后执行
 
 ```
+// yarn > 1.22
 yarn set version berry
+
+// yarn < 1.22
+yarn policies set-version berry 
 ```
 
 执行后项目就被明确声明为yarn2项目。出现了`.yarnrc.yml`文件与`.yarn`目录。
@@ -111,8 +114,6 @@ yarn
 以及外面一个.pnp.js我们的依赖在.yarn文件夹的cache目录中
 
 【图】
-
-
 
 ## Tips
 
