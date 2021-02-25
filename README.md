@@ -23,6 +23,11 @@
 ## babel 篇
 [用 babel-plugin 实现按需加载](./babel/用babel-plugin实现按需加载.md)
 
+## typescript 篇
+> 本教程并不会赘述ts相关的基础，建议有一定的使用经验后进行阅读，在未来会不定期更新。
+
+[ts高阶——类型声明空间转换](./typescript/类型声明空间转换.md)
+
 ## tool 篇
 [Yarn2 with PnP 升级指北](./tools/Yarn2withPnP.md)
 
