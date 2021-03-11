@@ -40,6 +40,7 @@ RoadMap:
 ## babel 篇
 [用 babel-plugin 实现按需加载](./babel/用babel-plugin实现按需加载.md)
 
+[庖丁解牛：最全babel-plugin-import源码详解](./babel/庖丁解牛：最全babel-plugin-import源码详解.md)
 ## webpack 篇
 
 RoadMap: 
