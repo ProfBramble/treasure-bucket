@@ -694,4 +694,4 @@ date + 1;
 - [ECMAScript® 2015 Language Specification](https://262.ecma-international.org/6.0/#sec-addition-operator-plus-runtime-semantics-evaluation)
 - [ECMAScript](https://tc39.es/ecma262/#sec-toprimitive)
 - [Understanding V8’s Bytecode](https://medium.com/dailyjs/understanding-v8s-bytecode-317d46c94775)
-- [用字节码包含node.js源码之原理篇](https://zhuanlan.zhihu.com/p/359235114)
+- [用字节码包含 node.js 源码之原理篇](https://zhuanlan.zhihu.com/p/359235114)
