@@ -329,7 +329,7 @@ Source Position Table (size = 0)
 
 在 npm 上发现了 [Bytenode](https://www.npmjs.com/package/bytenode)，它是 作用于 Node.js 的字节码编译器( bytecode compiler )，能把 JavaScript 编译成真正的 V8 字节码从而保护源代码，目前笔者也看见有人进行过这方面应用的详细分享，详情可见文末的参考文献。
 
-## 即时编译的解释执行与编译执行
+### 即时编译的解释执行与编译执行
 
 生成字节码后，V8 编译流程有两条链路可以选择，常规代码会直接执行字节码，由字节码的编译器直接执行。处理字节码的 `parser`  笔者没有对其了解，姑且可以先理解成字节码最后以 `gcc` 处理成机器代码执行。
 
