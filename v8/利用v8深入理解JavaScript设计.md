@@ -32,7 +32,7 @@ write_barrier(object, field_offset, value) {
 
 ### JavaScript 的定位
 
-使用过 `C / C++` 的同学一定对手动操作内存和释放内存有很深的体会，同时 `GO` 和 `D` 也存在着**指针**的概念。一般来说，如果一门语言是定位在“系统级别”都可以直接操作内存空间，除了上述提到的语言外，`Rust`也是一门系统级别的语言，FileFox 的 VM `TraceMonkey` 就用此语言进行编写。值得一提的是 `TraceMonkey` 的前身 `SpiderMonkey` 就是世界上第一款 JavaScript 引擎。当然，这里所谓直接操作内存堆栈内容，还是经过了硬件的一些映射，我们的高级语言在 OS 的上层，因此 OS 依旧给程序造成了直接操作内存的假象。
+使用过 `C / C++` 的同学一定对需要使用内置关键字 `free`, `delete`, `delete[ ]` 手动操作内存和释放内存有很深的体会，同时 `GO` 和 `D` 也存在着**指针**的概念。一般来说，如果一门语言是定位在“系统级别”都可以直接操作内存空间，除了上述提到的语言外，`Rust`也是一门系统级别的语言，FileFox 的 VM `TraceMonkey` 就用此语言进行编写。值得一提的是 `TraceMonkey` 的前身 `MoonMonkey` 就是世界上第一款 JavaScript 引擎。当然，这里所谓直接操作内存堆栈内容，还是经过了硬件的一些映射，我们的高级语言在 OS 的上层，因此 OS 依旧给程序造成了直接操作内存的假象。
 
 回到 JavaScript ，显然它**并不是一门定义在“系统级别”的语言**，更多的是更上游的**应用级别**语言，因此语言的设计以及应用场景都更加趋向于把一些底层的概念进行隐藏。除了语言的定位以外，JavaScript 是一门动态类型的语言，这意味着在语言运行时有非常多的运行信息，里面记录着诸如`全局执行上下文`、`全局作用域`、`原型链继承` 信息等等，正因为这些特性必须在运行时才可以完成，因此又多了一个需要 V8 的理由，同时也引出了 V8 中解释器的作用。
 
@@ -592,7 +592,9 @@ const foo = Number(1).toString() + '1' + String(null) + String(undefined) + BigI
 ```typescript
 type NumberOrString = number | string
 
-type PrototypeFunction<T> = (input: Record<string, any>, flag:T) => T
+type Check<T> = 
+
+type PrototypeFunction<Check> = (input: Record<string, any>, flag:T) => T
 
 type ToPrimitive = PrototypeFunction<NumberOrString>
 ```
