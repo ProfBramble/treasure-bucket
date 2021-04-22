@@ -5,13 +5,12 @@
 ## before start
 
 前文中，我们从宏观的角度介绍了 JavaScript 虚拟机 V8 的作用与它的编译流水线；以及介绍了在 V8 内部是如何 存储 JavaScript 对象，最后介绍了类型系统的应用。
-而本文会分为两个大部分，分别对 JavaScript 中的对象存储策略进行深入剖析。
 
 ## 对象策略
 
 ### elements & properties
 
-在 JavaScript 中，对象字面量类型（Named）存储在 `Properties` 中，而索引类型（Array-indexed）存储在 `Elements` 中，而且每个对象在创建初会有被分配一定的对象内元素（in-object properties），用于存放对象字面量类型。我们以 `利用 V8 深入理解 JavaScript 上篇` 得出的结论为基础继续进行剖析。
+在 JavaScript 中，对象字面量类型（Named）存储在 `Properties` 中，而索引类型（Array-indexed）存储在 `Elements` 中，而且每个对象在创建初会有被分配一定的对象内元素（in-object properties），用于存放对象字面量类型。我们以 `利用 V8 深入理解 JavaScript 上篇` 得出的结论为基础进行对象存储策略剖析。
 
 ### 为什么静态语言执行比较快
 
@@ -536,6 +535,5 @@ DebugPrint: 0xdc308148899: [JSArray]
 
 ## 参考资料
 
-[Fast properties in V8](https://v8.dev/blog/fast-properties)
-
-[How JavaScript works: inside the V8 engine + 5 tips on how to write optimized code](https://blog.sessionstack.com/how-javascript-works-inside-the-v8-engine-5-tips-on-how-to-write-optimized-code-ac089e62b12e)
+- [Fast properties in V8](https://v8.dev/blog/fast-properties)
+- [How JavaScript works: inside the V8 engine + 5 tips on how to write optimized code](https://blog.sessionstack.com/how-javascript-works-inside-the-v8-engine-5-tips-on-how-to-write-optimized-code-ac089e62b12e)
