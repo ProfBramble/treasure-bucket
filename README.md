@@ -1,9 +1,11 @@
 # treasure-bucket
+
 > 知乎：[玄冥](https://www.zhihu.com/people/prof-bramble)
 
-总结,积累,分享,传播知识~ 不积跬步,无以至千里.不积小流,无以成江海
+总结,积累,分享,传播知识 ~ 不积跬步,无以至千里.不积小流,无以成江海.
 
-## 什么是技术？
+## 什么是技术
+
 技术 ——
 
 **技**：持续砸时间较容易掌握，是术的根基；
@@ -13,8 +15,10 @@
 本博客在于帮助读者与笔者自身提升对`术`相关的修炼，因此读者会在相应的文中记录下遇到问题的思考过程，注重解决问题的过程，从而推导出结果。帮助大家提升技术思考的上限水准，一起加油！
 
 ## network 篇
+
 RoadMap:
-- HTTP1.x / 2.0
+
+- HTTP 1.x / 2.0
 - HTTPS
   - 公共秘钥加密
   - 非对称秘钥加密
@@ -40,10 +44,12 @@ RoadMap:
 ## babel 篇
 [用 babel-plugin 实现按需加载](./babel/用babel-plugin实现按需加载.md)
 
-[庖丁解牛：最全babel-plugin-import源码详解](./babel/庖丁解牛：最全babel-plugin-import源码详解.md)
+[庖丁解牛：最全 babel-plugin-import 源码详解](./babel/庖丁解牛：最全babel-plugin-import源码详解.md)
+
 ## webpack 篇
 
-RoadMap: 
+RoadMap:
+
 - webpack5
 - HMR
 - dev-server
@@ -55,14 +61,15 @@ RoadMap:
 ## typescript 篇
 
 RoadMap:
+
 - subtyping
 - jsx
 - generic practice
 - typescript parser
 
-> 本教程并不会赘述ts相关的基础，建议有一定的使用经验后进行阅读，在未来会不定期更新。
+> 本教程并不会赘述 ts 相关的基础，建议有一定的使用经验后进行阅读，在未来会不定期更新。
 
-[ts高阶——类型声明空间转换](./typescript/类型声明空间转换.md)
+[typescript 高阶——类型声明空间转换](./typescript/类型声明空间转换.md)
 
 ## tool 篇
 
