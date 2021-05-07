@@ -8,7 +8,8 @@ module.exports = {
   siteMetadata: {
     siteTitleAlt: `ProfBramble -- Blog`,
     siteTitle: `treasure-bucket`,
-    siteImage: `./static/android-chrome-192x192`
+    siteImage: `./static/android-chrome-192x192`,
+    author: `ProfBramble`
   },
   plugins: [
     {
@@ -36,6 +37,7 @@ module.exports = {
             url: `https://juejin.cn/user/3491704661881629`,
           },
         ],
+        feedTitle: 'ProfBramble -- Blog'
       },
     },
     {
