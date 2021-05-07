@@ -1,0 +1,200 @@
+---
+title: TypeScript高阶——类型声明空间转换
+date: 2020-12-24
+tags:
+  - typescript
+---
+
+> 本章节主要介绍 `TypeScript` 中类型声明空间的一些奇淫技巧，同时也是对自身学习做一个阶段性的记录。人们为了在日常工作中提效，发明了各种概念，在前端开发的视图中发明了 `组件` 概念，React 中为了提取公共的业务逻辑，推出了 React Hook，同时也为推进 FP 发展作出了贡献，而 TypeScript 的普及，是不是也可以有提取公共 type 的设定呢？本文就针对公共 type 的应用进行探讨。
+
+如果你觉得本文理解过于吃力，笔者建议还是先对 TypeScript 做一个系统的学习，再回过头来进行阅读。
+
+#### 元祖转联合类型
+
+##### 方法 1
+
+```typescript
+
+type ElementOf<T> = T extends Array<infer E> ? E : never;
+
+type TTuple = [string, number];
+
+type ToUnion = ElementOf<TTuple>; // string | number
+```
+
+##### 方法 2
+
+```typescript
+type TTuples = [string, number];
+
+type Res = TTuples[number]; // string | number
+```
+
+源自 [stackoverflow](https://stackoverflow.com/questions/44480644/string-union-to-string-array/45486495#45486495) ，这个比较🐂，`number`可以理解为读取数组的元素，因此可以把数组的每一个元素均变成联合类型。
+
+#### 获取函数类型
+
+##### 获取函数的返回值
+
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer P ? P : any;
+
+type Func = () => User;
+type Test = ReturnType<Func>; // User
+```
+
+##### 获取函数的参数
+
+```typescript
+type ReturnType<T> = T extends (...args: infer P) => any ? P : any;
+
+type Func = () => User;
+type Test = ReturnType<Func>; // User
+```
+
+以 class 作为例子,加上`new` 修饰符即可。
+
+```typescript
+// 获取参数类型
+type ConstructorParameters<T extends new (...args: any[]) => any> = T extends new (...args: infer P) => any
+  ? P
+  : never;
+
+// 获取实例类型
+type InstanceType<T extends new (...args: any[]) => any> = T extends new (...args: any[]) => infer R ? R : any;
+
+class TestClass {
+  constructor(public name: string, public age: number) {}
+}
+
+type Params = ConstructorParameters<typeof TestClass>; // [string, number]
+
+type Instance = InstanceType<typeof TestClass>; // TestClass
+```
+
+
+
+#### 联合类型转交叉类型
+
+```typescript
+type Intersect<T> = (T extends any ? ((x: T) => 0) : never) extends ((x: infer R) => 0) ? R : never
+
+type EX1 = Intersect<{a:1} | {b:1}> // {a:1} & {b:1}
+
+type EX2 = Intersect<[1,2] | string> // [1,2] & string
+```
+
+这里主要是分为两步
+
+- 遇到入参为联合类型时，ts条件会进行拆分`(T extends any ? ((x: T) => 0) : never)` 会拆分成`(T1 extends any ? ((x: T) => 0) : never) | (T2 extends any ? ((x: T) => 0) : never) `
+- 第二阶段同样是联合类型，但是由于函数参数会进行逆变，详情见 `subtyping` 章节（待更新），所以最后得到的是交叉类型。`((x: T1) => 0) | ((x: T2) => 0) extends ((x: infer R) => 0) ? R : never  `
+
+
+
+#### 模拟数组操作
+
+##### Shift
+
+```typescript
+type ShiftAction<T extends any[]> = T extends [any, ...infer R ] ? R : never
+
+type tuple = ['vue', 'react', 'angular'];
+
+type resultWithShift = ShiftAction<tuple> // ["react", "angular"]
+```
+
+##### unshift
+
+```typescript
+type UnShiftAction<T extends any[], A > = T extends [...infer R ] ? [A,...R] : never
+
+type tuple = ['vue', 'react', 'angular'];
+
+type resultWithUnShift = UnShiftAction<tuple,'jquery'> // ["jquery", "vue", "react", "angular"]
+```
+
+##### push
+
+```typescript
+type AnyObject = { [K in keyof any]: any; };
+
+type UnShiftAction<T extends any[], A  > = T extends [...infer R ] ? [A,...R] : never
+
+type ReplaceValByOwnKey<T, S extends AnyObject> = { [P in keyof T]: S[P] };
+
+type PushAction<T extends any[], E > = ReplaceValByOwnKey<UnShiftAction<T, any>, T & { [k: string]: E }>;
+
+type tuple = ['vue', 'react', 'angular'];
+
+type resultWithPush = PushAction<tuple,'jquery'> // ["vue", "react", "angular", "jquery"]
+```
+
+- 首先要把元祖的长度增加一个单位，所以这里就直接调用了shift方法，然后把元祖和索引签名进行配合，本身元祖也是对象，所以就和平时写`interface`定义的时一致，聪明的读者也肯定发现了只要新元祖的长度大于原元祖，无论大多少个，后面填充的内容也必定是`E`
+- 从新元祖`T`中取出key，把S[P]的数据一个个填入，原元祖数据填完后，就会启动索引签名，添加内容`E`
+
+##### pop
+
+```typescript
+type AnyObject = { [K in keyof any]: any; };
+
+type ShiftAction<T extends any[]> = T extends [any, ...infer R ] ? R : never
+
+type ReplaceValByOwnKey<T, S extends AnyObject> = { [P in keyof T]: S[P] };
+
+type PopAction<T extends any[]> = ReplaceValByOwnKey<ShiftAction<T>, T>;
+
+type tuple = ['vue', 'react', 'angular'];
+
+type resultWithPop = PopAction<tuple> // ["vue", "react"]
+```
+
+##### concat
+
+```typescript
+type ShiftAction<T extends any[]> = T extends [any, ...infer R ] ? R : never
+type ConcatAction<T1 extends any[], T2 extends any[], T extends any[] = T2 > = {
+  0: ConcatAction<ShiftAction<T1>, [], [ T1[0], ...T ]>,
+  1: T
+}[T1 extends [] ? 1 : 0]
+
+type tuple1 = ['vue', 'react', 'angular'];
+
+type tuple2 = ['lodash', 'dayjs', 'eslint'];
+
+type resultWithConcat = ConcatAction<tuple1,tuple2> // ["angular", "react", "vue", "lodash", "dayjs", "eslint"]
+```
+
+这里使用了`Type`递归方法，主要思路是需要一个工具人容器`T`，`T`的初始值就是`T2`，那么只要把元祖1的内容在递归中每次放入一个到T中，并删除即可。
+
+#### 联合类型转元祖
+
+```typescript
+// union to intersection of functions
+type UnionToIoF<U> =
+    (U extends any ? (k: (x: U) => void) => void : never) extends
+    ((k: infer I) => void) ? I : never
+
+// return last element from Union
+type UnionPop<U> = UnionToIoF<U> extends { (a: infer A): void; } ? A : never;
+type tests2=UnionPop<'a' | 'b' | 'c'>
+// prepend an element to a tuple.
+type Prepend<U, T extends any[]> =
+    ((a: U, ...r: T) => void) extends (...r: infer R) => void ? R : never;
+
+type UnionToTuples<Union, Result extends any[]=[]> = {
+    1: Result;
+    0: UnionToTuples_<Union, UnionPop<Union>, Result>;
+    // 0: UnionToTuples<Exclude<Union, UnionPop<Union>>, Prepend<UnionPop<Union>, Result>>
+}[[Union] extends [never] ? 1 : 0];
+
+type UnionToTuples_<Union, Element, Result extends any[]> =
+    UnionToTuples<Exclude<Union, Element>, Prepend<Element, Result>>;
+
+type finalResult = UnionToTuples<'a' | 'b' | 'c'>
+```
+
+这是本例中难度最高的例子之一，同时也是最综合的运用。
+### 章节小结：图灵完备
+
+在本章节中，我们对 `TypeScript` 类型声明空间（`Type`）模拟了数组，递归，判断等方法，如果读者可以熟练运用以上技巧，那么遇到很多场景都可以和水果忍者一样简单啦。但这也让一些读者产生了思考，`Type`基本可以模拟语言的数据结构与方法，那么它究竟能不能算一门语言呢？笔者思考后觉得`Type`虽然看上去是一套比较完备的编程语言，但是其根本无法满足图灵完备的五个标准，况且图灵完备作为一种数学模型其含义是：能够解决所有可计算的计算问题；所以`Type`无法成为一门 `GPL` ，但`type`与`JavaScript`的组合`TypeScript`肯定是一门图灵完备的语言，它拥有可进行自举的 parser，内部行为是将自身转换为 `JavaScript` 。综上所述`TypeScript`作为`Javascript`的超集，它当然是`GPL`，但是本文所述的`type`其本身更加符合外部`DSL`的设定。
+
