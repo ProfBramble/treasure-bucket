@@ -6,7 +6,7 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 
 module.exports = {
   siteMetadata: {
-    siteTitleAlt: `treasureBucket -- Blog`,
+    siteTitleAlt: `ProfBramble -- Blog`,
     siteTitle: `treasure-bucket`,
     siteImage: `./static/android-chrome-192x192`
   },
@@ -49,11 +49,11 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `minimal-blog - @lekoarts/gatsby-theme-minimal-blog`,
-        short_name: `minimal-blog`,
-        description: `Typography driven, feature-rich blogging theme with minimal aesthetics. Includes tags/categories support and extensive features for code blocks such as live preview, line numbers, and code highlighting.`,
+        short_name: `ProfBramble -- Blog`,
+        description: `总结,积累,分享,传播知识 ~ 不积跬步,无以至千里.不积小流,无以成江海.`,
         start_url: `/`,
         background_color: `#fff`,
-        theme_color: `#6B46C1`,
+        theme_color: `#1890FF`,
         display: `standalone`,
         icons: [
           {
