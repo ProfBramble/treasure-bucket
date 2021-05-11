@@ -1,6 +1,8 @@
 # treasure-bucket
 
-> 知乎：[玄冥](https://www.zhihu.com/people/prof-bramble)
+> 知乎：[晨风](https://www.zhihu.com/people/prof-bramble)
+
+**博客迁移中，链接暂时无法正常访问**
 
 总结,积累,分享,传播知识 ~ 不积跬步,无以至千里.不积小流,无以成江海.
 
