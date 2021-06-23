@@ -150,7 +150,7 @@
   Link: </component---node-modules-lekoarts-gatsby-theme-minimal-blog-core-src-templates-post-query-tsx-57f99312ad0f0ecc6f98.js>; rel=preload; as=script
   Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
   Link: </page-data/用-babel-plugin-实现按需加载/page-data.json>; rel=preload; as=fetch; crossorigin
-/about
+/treasure-bucket/about
   Link: </webpack-runtime-555d73d79402d2654363.js>; rel=preload; as=script
   Link: </framework-305b3707783ccc9d7ca6.js>; rel=preload; as=script
   Link: </app-b52154d369efe676f9e6.js>; rel=preload; as=script
@@ -158,7 +158,7 @@
   Link: </3d790d178db05b259e575ef93b2a0dbea1270f59-550e32192ffced72d3f6.js>; rel=preload; as=script
   Link: </component---node-modules-lekoarts-gatsby-theme-minimal-blog-core-src-templates-page-query-tsx-da5badcd02e605b3817c.js>; rel=preload; as=script
   Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
-  Link: </page-data/about/page-data.json>; rel=preload; as=fetch; crossorigin
+  Link: </page-data/treasure-bucket/about/page-data.json>; rel=preload; as=fetch; crossorigin
 /tags/babel
   Link: </webpack-runtime-555d73d79402d2654363.js>; rel=preload; as=script
   Link: </framework-305b3707783ccc9d7ca6.js>; rel=preload; as=script
