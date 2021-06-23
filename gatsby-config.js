@@ -20,11 +20,11 @@ module.exports = {
         navigation: [
           {
             title: `Blog`,
-            slug: `/blog`,
+            slug: `/treasure-bucket/blog`,
           },
           {
             title: `About`,
-            slug: `/about`,
+            slug: `/treasure-bucket/about`,
           },
         ],
         externalLinks: [
