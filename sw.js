@@ -27,32 +27,20 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-fbceaeb12a518fe97111.js"
+    "url": "webpack-runtime-555d73d79402d2654363.js"
   },
   {
     "url": "framework-305b3707783ccc9d7ca6.js"
   },
   {
-    "url": "app-60b63f4aa4ff97feea58.js"
+    "url": "app-9082e4e6b3ad22bdd6dc.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "f83f009e83840a17c168fe9df86e989b"
+    "revision": "457c655f2aa12512d831975005cf33ce"
   },
   {
     "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-b0556ce5127c1a3e2490.js"
-  },
-  {
-    "url": "page-data/offline-plugin-app-shell-fallback/page-data.json",
-    "revision": "42b9ceeb063370b03464ce70ab21d32f"
-  },
-  {
-    "url": "page-data/sq/d/3090400250.json",
-    "revision": "03628dbb8379def5963beadaa03d4f9f"
-  },
-  {
-    "url": "page-data/app-data.json",
-    "revision": "bdc3c6d0d0f72b1cb92fd520ae4eb93c"
   },
   {
     "url": "polyfill-da20a1db8321d70d55d6.js"
@@ -63,7 +51,7 @@ self.__precacheManifest = [
   },
   {
     "url": "manifest.webmanifest",
-    "revision": "c6f6f6699932419268e2ba07e52968f7"
+    "revision": "5d9aa4e2015b244cdf6cc2a8ab25be50"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
@@ -150,12 +138,12 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   lastNavigationRequest = event.request.url
 
   let { pathname } = new URL(event.request.url)
-  pathname = pathname.replace(new RegExp(`^/treasure-bucket`), ``)
+  pathname = pathname.replace(new RegExp(`^`), ``)
 
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/treasure-bucket/app-60b63f4aa4ff97feea58.js`))) {
+  if (!resources || !(await caches.match(`/app-9082e4e6b3ad22bdd6dc.js`))) {
     return await fetch(event.request)
   }
 
@@ -168,7 +156,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
     }
   }
 
-  const offlineShell = `/treasure-bucket/offline-plugin-app-shell-fallback/index.html`
+  const offlineShell = `/offline-plugin-app-shell-fallback/index.html`
   const offlineShellWithKey = workbox.precaching.getCacheKeyForURL(offlineShell)
   return await caches.match(offlineShellWithKey)
 })
